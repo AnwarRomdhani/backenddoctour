@@ -1,17 +1,18 @@
 import { Injectable, BadRequestException, UnauthorizedException } from '@nestjs/common';
 import { UserService } from '../user/user.service';
-import * as crypto from 'crypto';
+import * as bcrypt from 'bcrypt';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
-  constructor(private userService: UserService) {}
+  constructor(private userService: UserService, private jwtService: JwtService) {}
 
-  private hashPassword(password: string): string {
-    return crypto.createHash('sha256').update(password).digest('hex');
+  private async hashPassword(password: string): Promise<string> {
+    return bcrypt.hash(password, 10);
   }
 
-  private comparePassword(password: string, hash: string): boolean {
-    return this.hashPassword(password) === hash;
+  private async comparePassword(password: string, hash: string): Promise<boolean> {
+    return bcrypt.compare(password, hash);
   }
 
   async register(email: string, username: string, password: string) {
@@ -29,7 +30,7 @@ export class AuthService {
       throw new BadRequestException('Password must be at least 6 characters');
     }
 
-    const hashedPassword = this.hashPassword(password);
+    const hashedPassword = await this.hashPassword(password);
     return this.userService.create({
       email,
       username,
@@ -43,12 +44,15 @@ export class AuthService {
       throw new UnauthorizedException('Invalid email or password');
     }
 
-    const isPasswordValid = this.comparePassword(password, user.password);
+    const isPasswordValid = await this.comparePassword(password, user.password);
     if (!isPasswordValid) {
       throw new UnauthorizedException('Invalid email or password');
     }
 
+    const payload = { sub: user.id, email: user.email };
+    const accessToken = this.jwtService.sign(payload);
+
     const { password: _, ...userWithoutPassword } = user;
-    return userWithoutPassword;
+    return { accessToken, user: userWithoutPassword };
   }
 }
