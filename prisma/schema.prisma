@@ -24,4 +24,5 @@ model User {
   phone     String?
   address   String?
   cin       String? @db.VarChar(8)
+  coinBalance Float   @default(0)
 }

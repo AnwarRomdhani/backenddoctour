@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Patch, Delete, Body, Param, ParseIntPipe, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Delete, Body, Param, ParseIntPipe, UseGuards, NotFoundException } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { UserService } from './user.service';
 
@@ -11,6 +11,7 @@ export class CreateUserDto {
   phone?: string;
   address?: string;
   cin?: string;
+  coinBalance?: number;
 }
 
 export class UpdateUserDto {
@@ -22,6 +23,7 @@ export class UpdateUserDto {
   phone?: string;
   address?: string;
   cin?: string;
+  coinBalance?: number;
 }
 
 @Controller('users')
@@ -37,7 +39,11 @@ export class UserController {
   @Get(':id')
   @UseGuards(AuthGuard('jwt'))
   async findById(@Param('id', ParseIntPipe) id: number) {
-    return this.userService.findById(id);
+    const user = await this.userService.findById(id);
+    if (!user) {
+      throw new NotFoundException(`User with id ${id} not found`);
+    }
+    return user;
   }
 
   @Post()
@@ -58,6 +64,10 @@ export class UserController {
   @Delete(':id')
   @UseGuards(AuthGuard('jwt'))
   async delete(@Param('id', ParseIntPipe) id: number) {
-    return this.userService.delete(id);
+    try {
+      return await this.userService.delete(id);
+    } catch (error) {
+      throw new NotFoundException(`User with id ${id} not found`);
+    }
   }
 }

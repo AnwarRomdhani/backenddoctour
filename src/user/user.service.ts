@@ -8,7 +8,7 @@ export class UserService {
   async findById(id: number) {
     return this.prisma.user.findUnique({
       where: { id },
-      select: { id: true, email: true, username: true, firstName: true, lastName: true, phone: true, address: true, cin: true },
+      select: { id: true, email: true, username: true, firstName: true, lastName: true, phone: true, address: true, cin: true, coinBalance: true },
     });
   }
 
@@ -26,29 +26,29 @@ export class UserService {
 
   async findAll() {
     return this.prisma.user.findMany({
-      select: { id: true, email: true, username: true, firstName: true, lastName: true, phone: true, address: true, cin: true },
+      select: { id: true, email: true, username: true, firstName: true, lastName: true, phone: true, address: true, cin: true, coinBalance: true },
     });
   }
 
-  async create(data: { email: string; username: string; password: string; firstName?: string; lastName?: string; phone?: string; address?: string; cin?: string }) {
+  async create(data: { email: string; username: string; password: string; firstName?: string; lastName?: string; phone?: string; address?: string; cin?: string; coinBalance?: number }) {
     return this.prisma.user.create({
       data,
-      select: { id: true, email: true, username: true, firstName: true, lastName: true, phone: true, address: true, cin: true },
+      select: { id: true, email: true, username: true, firstName: true, lastName: true, phone: true, address: true, cin: true, coinBalance: true },
     });
   }
 
-  async update(id: number, data: Partial<{ email: string; username: string; password: string; firstName: string; lastName: string; phone: string; address: string; cin: string }>) {
+  async update(id: number, data: Partial<{ email: string; username: string; password: string; firstName: string; lastName: string; phone: string; address: string; cin: string; coinBalance: number }>) {
     return this.prisma.user.update({
       where: { id },
       data,
-      select: { id: true, email: true, username: true, firstName: true, lastName: true, phone: true, address: true, cin: true },
+      select: { id: true, email: true, username: true, firstName: true, lastName: true, phone: true, address: true, cin: true, coinBalance: true },
     });
   }
 
   async delete(id: number) {
     return this.prisma.user.delete({
       where: { id },
-      select: { id: true, email: true, username: true, firstName: true, lastName: true, phone: true, address: true, cin: true },
+      select: { id: true, email: true, username: true, firstName: true, lastName: true, phone: true, address: true, cin: true, coinBalance: true },
     });
   }
 }
