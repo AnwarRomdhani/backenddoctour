@@ -15,7 +15,7 @@ export class AuthService {
     return bcrypt.compare(password, hash);
   }
 
-  async register(email: string, username: string, password: string) {
+  async register(email: string, username: string, password: string, firstName?: string, lastName?: string, phone?: string, address?: string, cin?: string) {
     const existingEmail = await this.userService.findByEmail(email);
     if (existingEmail) {
       throw new BadRequestException('Email already in use');
@@ -30,11 +30,20 @@ export class AuthService {
       throw new BadRequestException('Password must be at least 6 characters');
     }
 
+    if (cin && !/^\d{8}$/.test(cin)) {
+      throw new BadRequestException('CIN must be exactly 8 digits');
+    }
+
     const hashedPassword = await this.hashPassword(password);
     return this.userService.create({
       email,
       username,
       password: hashedPassword,
+      firstName,
+      lastName,
+      phone,
+      address,
+      cin,
     });
   }
 

@@ -5,6 +5,11 @@ export class RegisterDto {
   email: string;
   username: string;
   password: string;
+  firstName?: string;
+  lastName?: string;
+  phone?: string;
+  address?: string;
+  cin?: string;
 }
 
 export class LoginDto {
@@ -18,7 +23,16 @@ export class AuthController {
 
   @Post('register')
   async register(@Body() body: RegisterDto) {
-    return this.authService.register(body.email, body.username, body.password);
+    return this.authService.register(
+      body.email,
+      body.username,
+      body.password,
+      body.firstName,
+      body.lastName,
+      body.phone,
+      body.address,
+      body.cin,
+    );
   }
 
   @Post('login')

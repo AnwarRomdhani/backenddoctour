@@ -6,12 +6,22 @@ export class CreateUserDto {
   email: string;
   username: string;
   password: string;
+  firstName?: string;
+  lastName?: string;
+  phone?: string;
+  address?: string;
+  cin?: string;
 }
 
 export class UpdateUserDto {
   email?: string;
   username?: string;
   password?: string;
+  firstName?: string;
+  lastName?: string;
+  phone?: string;
+  address?: string;
+  cin?: string;
 }
 
 @Controller('users')
