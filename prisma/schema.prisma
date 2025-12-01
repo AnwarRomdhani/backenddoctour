@@ -25,4 +25,17 @@ model User {
   address   String?
   cin       String? @db.VarChar(8)
   coinBalance Float   @default(0)
+  doctor    Doctor?
+  patient   Patient?
+}
+
+model Doctor {
+  id   Int    @id
+  user User   @relation(fields: [id], references: [id])
+  cnom String @db.VarChar(8) @unique
+}
+
+model Patient {
+  id   Int    @id
+  user User   @relation(fields: [id], references: [id])
 }
